@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+	<body>
+		<nav>
+			<div class="panel-block">Native language: {{ language.l1 }}</div>
+			<div class="panel-block">Current language: {{ language.l2 }}</div>
+		</nav>
+		<nav>
+			<p>Articles</p>
+			<div>
+				<ul>
+					{% for article in articles %}
+					<li>
+						<a href="{{url_for('read_article', id=article['id'], page=0)}}">
+							{{ article.title }}
+						</a>
+						<action="{{url_for('delete_article', id=article['id'])}}" method="post">
+							<input type="submit" value="Delete">
+						</form>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</nav>
+		<div>
+			<form action="{{url_for('add_article')}}" method="post" >
+				<div>
+					<label>Name</label>
+					<input type="text" name="title">
+				</div>
+				<div>
+					<label class="label">Article</label>
+					<textarea name="text"></textarea>
+				</div>
+				<input type="submit">
+			</form>
+		</div>
+	</body>
+</html>
