@@ -15,7 +15,7 @@
 						<a href="{{url_for('read_article', id=article['id'], page=0)}}">
 							{{ article.title }}
 						</a>
-						<action="{{url_for('delete_article', id=article['id'])}}" method="post">
+						<form action="{{url_for('delete_article', id=article['id'])}}" method="post">
 							<input type="submit" value="Delete">
 						</form>
 					</li>
