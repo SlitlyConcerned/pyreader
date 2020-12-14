@@ -16,7 +16,6 @@ import dictionary
 import model
 
 puncs = [*string.punctuation, "\n"]
-print(puncs)
 TOKENIZERS = {
     "german": make_tokenizer_from_regex(f"[a-zA-ZäöüÄÖÜß]*[{''.join(puncs)}]*?")
 }
@@ -60,16 +59,16 @@ def read_article(id, page):
     article = model.Article.query.get(id)
     tokenizer = TOKENIZERS[language().l2.lower()]
     words = tokenizer(article.text)
-    print(words)
     wordnew = []
     dct = []
     translations = []
     periodcount = 0
     for word in words:
-        print(periodcount / (4 * (page + 1)))
         if word == ".":
             periodcount += 1
-        elif 1 > periodcount / (4 * (page + 1)) >= 0:
+        if  0 <= (periodcount - (page * 4)) <= 4:
+            if not wordnew and word == ".":
+                continue
             wordnew.append(word)
             wordrow = model.Word.query.filter_by(word=word).first()
             transrow = model.Translation.query.filter_by(word=wordrow).first()
