@@ -17,7 +17,7 @@ import model
 
 puncs = [*string.punctuation, "\n"]
 TOKENIZERS = {
-    "german": make_tokenizer_from_regex(f"[a-zA-ZäöüÄÖÜß]*[{''.join(puncs)}]*?")
+    "german": make_tokenizer_from_regex(f"[a-zA-ZäöüÄÖÜß0-9]*[{''.join(puncs)}]*?")
 }
 
 
