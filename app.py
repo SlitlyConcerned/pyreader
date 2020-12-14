@@ -152,7 +152,7 @@ def finish_page(id, page):
     for word in words:
         if word == ".":
             periodcount += 1
-        elif 2 > periodcount / (4 * (page + 1)) > 1:
+        if  0 <= (periodcount - (page * 4)) <= 4:
             wordrow = model.Word.query.filter_by(word=word).first()
             if not wordrow:
                 wordrow = model.Word(word=word, state="known", language=language())
