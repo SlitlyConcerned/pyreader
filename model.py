@@ -1,4 +1,4 @@
-from app import db, language
+from app import db
 import tokenizer
 
 
@@ -41,7 +41,7 @@ class Article(db.Model):
     language = db.relationship("Language")
 
     @classmethod
-    def tokenize(cls, id):
+    def tokenize(cls, id, language):
         article = cls.query.get(id)
-        tokenizer_func = tokenizer.TOKENIZERS[language().l2.lower()]
+        tokenizer_func = tokenizer.TOKENIZERS[language.l2.lower()]
         return tokenizer_func(article.text)
