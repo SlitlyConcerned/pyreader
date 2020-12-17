@@ -1,4 +1,3 @@
-import tokenizer
 import re
 import string
 from flask import Flask, render_template, request, redirect, url_for, jsonify
@@ -12,6 +11,7 @@ db = SQLAlchemy(app)
 
 import model  # noqa
 import dictionary  # noqa
+import tokenizer  # noqa
 
 
 def language():
@@ -37,8 +37,8 @@ def root():
         return render_template("main.html", articles=model.Article.query.all(), language=language())
 
 
-@app.route("/<int:id>/read/<int:page>", methods=["GET", "POST"])
-def read_article(id, page):
+@app.route("/<int:id>/read/<int:page_num>", methods=["GET", "POST"])
+def read_article(id, page_num):
     if request.method == "POST":
         word = request.form["word"]
         translation = request.form["translation"]
@@ -49,32 +49,16 @@ def read_article(id, page):
             tr = model.Translation(translation=translation, word=wordrow)
             db.session.add(tr)
             db.session.commit()
-    words = model.Article.tokenize(id)
-    wordnew = []
-    dct = []
-    translations = []
-    periodcount = 0
-    for word in words:
-        if word == ".":
-            periodcount += 1
-        if 0 <= (periodcount - (page * 4)) <= 4:
-            if not wordnew and word == ".":
-                continue
-            wordnew.append(word)
-            wordrow = model.Word.query.filter_by(word=word).first()
-            transrow = model.Translation.query.filter_by(word=wordrow).first()
-            translation = ""
-            if wordrow:
-                dct.append(wordrow.state)
-            else:
-                dct.append("unknown")
 
-            if transrow:
-                translation = transrow.translation
-
-            translations.append(translation)
-
-    return render_template("read.html", words=wordnew, status=dct, translations=translations, id=id, page=page)
+    page = model.Article.page(id, language(), page_num)
+    return render_template(
+        "read.html",
+        words=page.words_in_page,
+        status=list(page.states),
+        translations=list(page.translations),
+        id=id,
+        page_num=page_num
+    )
 
 
 @app.route("/<int:id>/delete", methods=["POST"])
@@ -133,20 +117,14 @@ def get_word_status():
     return jsonify(result=wordrow.state)
 
 
-@app.route("/_finish_page/<int:id>/<int:page>", methods=["POST"])
-def finish_page(id, page):
-    article = model.Article.query.get(id)
-    tokenizer = TOKENIZERS[language().l2.lower()]
-    words = tokenizer(article.text)
-    periodcount = 0
-    for word in words:
-        if word == ".":
-            periodcount += 1
-        if 0 <= (periodcount - (page * 4)) <= 4:
-            wordrow = model.Word.query.filter_by(word=word).first()
-            if not wordrow:
-                wordrow = model.Word(
-                    word=word, state="known", language=language())
-                db.session.add(wordrow)
+@app.route("/_finish_page/<int:id>/<int:page_num>", methods=["POST"])
+def finish_page(id, page_num):
+    page = model.Article.page(id, language(), page_num)
+    for word in page.words_in_page:
+        wordrow = model.Word.query.filter_by(word=word).first()
+        if not wordrow:
+            new_wordrow = model.Word(
+                word=word, state="known", language=language())
+            db.session.add(new_wordrow)
     db.session.commit()
-    return redirect(url_for("read_article", id=id, page=page+1))
+    return redirect(url_for("read_article", id=id, page_num=page_num+1))

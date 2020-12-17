@@ -1,50 +1,54 @@
 <!DOCTYPE html>
+
 <head>
 	<link rel="stylesheet" href="{{url_for('static', filename='css/read.css')}}">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 	<script type="text/javascript">
-	$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		$SCRIPT_ROOT = {{ request.script_root | tojson | safe }};
 	</script>
 	<script src="{{url_for('static', filename='js/read.js')}}" type="module"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <html>
-	<body>
-		<div class="reader">
-			{% for word in words %}
 
-			{% if word == "\n" %}
-			<br>
-			{% else %}
-			<span id="{{loop.index0}}" data-translation="{{translations[loop.index0]}}" class="{{status[loop.index0]}}" role="tooltip">{{word}}</span>
-			{% endif %}
-			{% endfor %}
-		</div>
-		<div class="right">
-			<a href="{{url_for('root')}}">Back to menu</a>
-			<a href="{{url_for('read_article', id=id, page=page+1)}}">Next</a>
-			<a href="{{url_for('read_article', id=id, page=page-1)}}">Back</a>
-			<form action="{{url_for('finish_page', id=id, page=page)}}" method="post">
-					<input type="submit" value="I get it!">
+<body>
+	<div class="reader">
+		{% for word in words %}
+
+		{% if word == "\n" %}
+		<br>
+		{% else %}
+		<span id="{{loop.index0}}" data-translation="{{translations[loop.index0]}}" class="{{status[loop.index0]}}"
+			role="tooltip">{{word}}</span>
+		{% endif %}
+		{% endfor %}
+	</div>
+	<div class="right">
+		<a href="{{url_for('root')}}">Back to menu</a>
+		<a href="{{url_for('read_article', id=id, page_num=page_num+1)}}">Next</a>
+		<a href="{{url_for('read_article', id=id, page_num=page_num-1)}}">Back</a>
+		<form action="{{url_for('finish_page', id=id, page_num=page_num)}}" method="post">
+			<input type="submit" value="I get it!">
+		</form>
+		<div class="dictionary">
+			<h1 id="word"></h1>
+			<form method="post">
+				Word
+				<input type="text" id="word-input" name="word">
+				<br>
+				Definition
+				<input type="text" id="meaning-input" name="translation">
+				<br>
+				<select id="select" name="state">
+					<option value="learning">Learning</option>
+					<option value="unknown">Unknown</option>
+					<option value="known">Known</option>
+				</select>
+				<input type="submit">
 			</form>
-			<div class="dictionary">
-				<h1 id="word"></h1>
-				<form method="post">
-					Word
-					<input type="text" id="word-input" name="word">
-					<br>
-					Definition
-					<input type="text" id="meaning-input" name="translation">
-					<br>
-					<select id="select" name="state">
-						<option value="learning">Learning</option>
-						<option value="unknown">Unknown</option>
-						<option value="known">Known</option>
-					</select>
-					<input type="submit">
-				</form>
-			<iframe id="dictionary"
-onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';"> </div>
+			<iframe id="dictionary" onload="this.style.height=(this.contentWindow.document.body.scrollHeight+20)+'px';">
 		</div>
-	</body>
+	</div>
+</body>
+
 </html>

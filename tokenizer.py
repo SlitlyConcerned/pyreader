@@ -1,8 +1,10 @@
 import string
+import words
+import re
 
 
 def make_tokenizer_from_regex(re_string):
-    return lambda inp: [word for word in re.findall(re_string, inp) if word]
+    return lambda inp: words.Words([word for word in re.findall(re_string, inp) if word])
 
 
 puncs = [*string.punctuation, "\n"]

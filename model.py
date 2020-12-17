@@ -45,3 +45,7 @@ class Article(db.Model):
         article = cls.query.get(id)
         tokenizer_func = tokenizer.TOKENIZERS[language.l2.lower()]
         return tokenizer_func(article.text)
+
+    @classmethod
+    def page(cls, id, language, number):
+        return cls.tokenize(id, language).page(number)
