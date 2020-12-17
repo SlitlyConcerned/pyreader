@@ -1,24 +1,17 @@
+import tokenizer
 import re
 import string
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 
-def make_tokenizer_from_regex(re_string):
-    return lambda inp: [word for word in re.findall(re_string, inp) if word]
-
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cat.db'
 db = SQLAlchemy(app)
 
-import dictionary
-import model
 
-puncs = [*string.punctuation, "\n"]
-TOKENIZERS = {
-    "german": make_tokenizer_from_regex(f"[a-zA-ZäöüÄÖÜß0-9]*[{''.join(puncs)}]*?")
-}
+import model  # noqa
+import dictionary  # noqa
 
 
 def language():
@@ -57,8 +50,8 @@ def read_article(id, page):
             db.session.add(tr)
             db.session.commit()
     article = model.Article.query.get(id)
-    tokenizer = TOKENIZERS[language().l2.lower()]
-    words = tokenizer(article.text)
+    tokenizer_func = tokenizer.TOKENIZERS[language().l2.lower()]
+    words = tokenizer_func(article.text)
     wordnew = []
     dct = []
     translations = []
@@ -66,7 +59,7 @@ def read_article(id, page):
     for word in words:
         if word == ".":
             periodcount += 1
-        if  0 <= (periodcount - (page * 4)) <= 4:
+        if 0 <= (periodcount - (page * 4)) <= 4:
             if not wordnew and word == ".":
                 continue
             wordnew.append(word)
@@ -82,7 +75,6 @@ def read_article(id, page):
                 translation = transrow.translation
 
             translations.append(translation)
-
 
     return render_template("read.html", words=wordnew, status=dct, translations=translations, id=id, page=page)
 
@@ -152,10 +144,11 @@ def finish_page(id, page):
     for word in words:
         if word == ".":
             periodcount += 1
-        if  0 <= (periodcount - (page * 4)) <= 4:
+        if 0 <= (periodcount - (page * 4)) <= 4:
             wordrow = model.Word.query.filter_by(word=word).first()
             if not wordrow:
-                wordrow = model.Word(word=word, state="known", language=language())
+                wordrow = model.Word(
+                    word=word, state="known", language=language())
                 db.session.add(wordrow)
     db.session.commit()
     return redirect(url_for("read_article", id=id, page=page+1))

@@ -1,1 +1,2 @@
-class DictionaryException(Exception):pass
+class DictionaryException(Exception):
+    pass

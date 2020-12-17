@@ -5,7 +5,7 @@ class Translation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     translation = db.Column(db.Text, nullable=False)
     word_id = db.Column(db.Integer, db.ForeignKey("word.id"),
-    nullable=False)
+                        nullable=False)
     word = db.relationship("Word")
 
 
@@ -14,7 +14,7 @@ class Word(db.Model):
     word = db.Column(db.Text, nullable=False)
     state = db.Column(db.Text, nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'),
-    nullable=False)
+                            nullable=False)
     language = db.relationship("Language")
 
 
@@ -27,7 +27,7 @@ class Language(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'),
-    nullable=False)
+                            nullable=False)
     language = db.relationship("Language")
 
 
@@ -36,6 +36,5 @@ class Article(db.Model):
     title = db.Column(db.Text, nullable=False)
     text = db.Column(db.Text, unique=True, nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'),
-    nullable=False)
+                            nullable=False)
     language = db.relationship("Language")
-

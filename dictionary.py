@@ -39,7 +39,7 @@ class DictionaryService(dict):
         }
 
         if self.keyvalue():
-            data = {**data, self.keykey():self.keyvalue()}
+            data = {**data, self.keykey(): self.keyvalue()}
 
         return data
 
