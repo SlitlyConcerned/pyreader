@@ -33,7 +33,6 @@ class DictionaryService(dict):
             self.textkey(): text
         }
 
-
         if self.keyvalue():
             data = {**data, self.keykey():self.keyvalue()}
 
@@ -65,7 +64,6 @@ class YandexDictionary(DictionaryService):
         return "https://dictionary.yandex.net/api/v1/dicservice.json/lookup"
 
     def get_translation(self, result_data):
-        print(result_data)
         return result_data["def"][0]["tr"][0]["text"]
 
 
@@ -77,7 +75,6 @@ def _add_translation_if_not_exist(word="", tr="", l1="", l2=""):
         db.session.add(wordrow)
 
     translation = Translation(translation=tr, word=wordrow)
-    print(word, translation, wordrow)
     db.session.add(translation)
     db.session.commit()
 
