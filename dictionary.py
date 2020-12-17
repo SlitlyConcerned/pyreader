@@ -80,7 +80,7 @@ def _add_translation_if_not_exist(word="", tr="", l1="", l2=""):
 
 def add_translation(text, l1, l2):
     services = [YandexDictionary(
-        apikey="dict.1.1.20201213T074152Z.98811e12a96c6d68.790c80bcb659a574cf8beefed9a1e964e3c1dae9",
+        apikey=os.environ.get("YANDEX_APIKEY"),
         l1=l1,
         l2=l2
     )]
