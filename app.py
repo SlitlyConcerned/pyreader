@@ -49,9 +49,7 @@ def read_article(id, page):
             tr = model.Translation(translation=translation, word=wordrow)
             db.session.add(tr)
             db.session.commit()
-    article = model.Article.query.get(id)
-    tokenizer_func = tokenizer.TOKENIZERS[language().l2.lower()]
-    words = tokenizer_func(article.text)
+    words = model.Article.tokenize(id)
     wordnew = []
     dct = []
     translations = []
