@@ -2,6 +2,7 @@ import langcodes
 import requests
 import os
 
+from exceptions import DictionaryException
 from app import db
 from model import Language, Translation, Word
 
@@ -22,8 +23,11 @@ class DictionaryService(dict):
     def get(self, text):
         data = self.get_data(text)
         resp = requests.get(self.url(), params=data)
-        result = resp.json()
-        return self.get_translation(result)
+        if resp.status_code == 200:
+            result = resp.json()
+            return self.get_translation(result)
+        else:
+            raise DictionaryException("Bad request.")
 
     def get_translation(self, result_data):
         raise NotImplementedError
