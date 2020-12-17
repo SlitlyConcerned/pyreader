@@ -1,5 +1,6 @@
 import langcodes
 import requests
+import os
 
 from app import db
 from model import Language, Translation, Word
